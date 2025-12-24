@@ -24,7 +24,7 @@ def scrape_listing_details(driver, listing_url, listing_id, html_dir=None):
             html_file = html_dir / f"{listing_id}.html"
             with open(html_file, 'w', encoding='utf-8') as f:
                 f.write(driver.page_source)
-            listing_data["html_file"] = str(html_file)
+            listing_data["html_file"] = f"raw_html/{listing_id}.html"
             print(f"Saved HTML to {html_file.name}")
 
         # Extract title
@@ -105,10 +105,27 @@ def scrape_listing_details(driver, listing_url, listing_id, html_dir=None):
 
         # Extract condition
         try:
-            condition_elems = driver.find_elements(By.XPATH, '//span[contains(text(), "Condition")]/following-sibling::span')
-            if not condition_elems:
-                condition_elems = driver.find_elements(By.XPATH, '//div[contains(text(), "Condition")]/..//span[not(contains(text(), "Condition"))]')
-            listing_data["condition"] = condition_elems[0].text if condition_elems else "N/A"
+            condition = "N/A"
+            # Look for spans with the condition class that contain condition keywords
+            condition_elems = driver.find_elements(By.CSS_SELECTOR, 'span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.xlh3980.xvmahel.x1n0sxbx.x6prxxf.xvq8zen.xo1l8bm.xzsf02u')
+
+            # Exact condition values to match (not partial matches in descriptions)
+            valid_conditions = [
+                "New", "New with tags", "New without tags", "New with box", "New without box",
+                "Used - Like new", "Used - Good", "Used - Fair", "Used - Acceptable",
+                "Used", "Like new", "Fair", "Good", "Excellent",
+                "For parts or not working", "For parts", "Refurbished", "Pre-owned"
+            ]
+
+            for elem in condition_elems:
+                text = elem.text.strip()
+                # Only match if text is short (< 50 chars) and matches a valid condition exactly or starts with one
+                if text and len(text) < 50:
+                    if text in valid_conditions or any(text.startswith(vc) for vc in valid_conditions):
+                        condition = text
+                        break
+
+            listing_data["condition"] = condition
         except:
             listing_data["condition"] = "N/A"
 
@@ -189,24 +206,6 @@ def scrape_listing_details(driver, listing_url, listing_id, html_dir=None):
             listing_data["image_urls"] = []
             listing_data["image_count"] = 0
 
-        # Extract additional details/attributes
-        listing_data["attributes"] = {}
-        try:
-            # Look for attribute pairs (label: value)
-            attribute_containers = driver.find_elements(By.XPATH, '//div[contains(@class, "x78zum5")]')
-
-            for container in attribute_containers:
-                try:
-                    spans = container.find_elements(By.TAG_NAME, 'span')
-                    if len(spans) >= 2:
-                        label = spans[0].text
-                        value = spans[1].text
-                        if label and value and label != value and len(label) < 50:
-                            listing_data["attributes"][label] = value
-                except:
-                    continue
-        except:
-            pass
 
         # Extract listing posted date
         try:
