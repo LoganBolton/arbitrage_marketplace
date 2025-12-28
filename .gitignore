@@ -1,5 +1,10 @@
 selenium/scraped_data/*
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Node modules
 node_modules/
 
@@ -7,6 +12,13 @@ node_modules/
 web/.next/
 web/out/
 web/dist/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
 
 # Misc
 .DS_Store
