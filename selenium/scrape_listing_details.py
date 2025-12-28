@@ -1,19 +1,25 @@
 import json
 import time
+import uuid
 from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 
-def scrape_listing_details(driver, listing_url, listing_id, html_dir=None):
+def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, html_dir=None):
     """Scrape detailed information from a single listing page"""
     try:
         print(f"\nScraping listing {listing_id}...")
         driver.get(listing_url)
         time.sleep(3)  # Wait for page to load
 
+        # Generate UUID if not provided
+        if listing_uuid is None:
+            listing_uuid = str(uuid.uuid4())
+
         listing_data = {
+            "uuid": listing_uuid,
             "listing_id": listing_id,
             "url": listing_url,
             "scraped_at": time.strftime("%Y-%m-%d %H:%M:%S")
@@ -275,8 +281,11 @@ def main():
                 print(f"Skipping listing {listing_id} - no URL")
                 continue
 
+            # Get or generate UUID
+            listing_uuid = listing.get("uuid", str(uuid.uuid4()))
+
             # Scrape details
-            detailed_data = scrape_listing_details(driver, listing_url, listing_id, html_dir)
+            detailed_data = scrape_listing_details(driver, listing_url, listing_id, listing_uuid, html_dir)
 
             # Merge with original listing data
             detailed_data["original_thumbnail"] = listing.get("image_url")

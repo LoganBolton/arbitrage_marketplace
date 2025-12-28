@@ -3,6 +3,7 @@ import path from "path";
 import ListingCard from "@/components/ListingCard";
 
 interface Listing {
+  uuid: string;
   listing_id: string;
   url: string;
   title: string;
@@ -18,6 +19,11 @@ interface Listing {
     title: string;
     location: string;
   };
+}
+
+interface PriceEstimate {
+  uuid: string;
+  estimated_price?: string;
 }
 
 async function getListings(): Promise<Listing[]> {
@@ -39,8 +45,26 @@ async function getListings(): Promise<Listing[]> {
   }
 }
 
+async function getPriceEstimates(): Promise<Record<string, PriceEstimate>> {
+  const filePath = path.join(
+    process.cwd(),
+    "..",
+    "ai",
+    "responses",
+    "price_estimates.json"
+  );
+
+  try {
+    const data = await fs.readFile(filePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    return {};
+  }
+}
+
 export default async function Home() {
   const listings = await getListings();
+  const priceEstimates = await getPriceEstimates();
 
   return (
     <main className="main">
@@ -51,7 +75,11 @@ export default async function Home() {
 
       <div className="listings-grid">
         {listings.map((listing) => (
-          <ListingCard key={listing.listing_id} listing={listing} />
+          <ListingCard
+            key={listing.listing_id}
+            listing={listing}
+            aiPrice={priceEstimates[listing.uuid]?.estimated_price}
+          />
         ))}
       </div>
 

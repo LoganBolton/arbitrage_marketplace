@@ -23,9 +23,16 @@ interface Listing {
 
 interface ListingCardProps {
   listing: Listing;
+  aiPrice?: string;
 }
 
-export default function ListingCard({ listing }: ListingCardProps) {
+function parsePrice(priceStr: string): number | null {
+  // Extract first number from price string (e.g., "$100" -> 100, "$100 - $150" -> 100)
+  const match = priceStr.replace(/,/g, "").match(/\$?([\d.]+)/);
+  return match ? parseFloat(match[1]) : null;
+}
+
+export default function ListingCard({ listing, aiPrice }: ListingCardProps) {
   const [imageError, setImageError] = useState(false);
 
   const displayTitle =
@@ -45,6 +52,16 @@ export default function ListingCard({ listing }: ListingCardProps) {
 
   const imageUrl =
     listing.image_urls?.[0] || listing.original_thumbnail || null;
+
+  // Determine if AI price is higher or lower than listed price
+  let priceClass = "listing-ai-price";
+  if (aiPrice) {
+    const listedNum = parsePrice(displayPrice);
+    const aiNum = parsePrice(aiPrice);
+    if (listedNum !== null && aiNum !== null) {
+      priceClass = aiNum > listedNum ? "listing-ai-price-green" : "listing-ai-price-red";
+    }
+  }
 
   return (
     <a
@@ -74,6 +91,9 @@ export default function ListingCard({ listing }: ListingCardProps) {
       </div>
       <div className="listing-info">
         <div className="listing-price">{displayPrice}</div>
+        {aiPrice && (
+          <div className={priceClass}>Estimated: {aiPrice}</div>
+        )}
         <div className="listing-title">{displayTitle}</div>
         <div className="listing-location">{displayLocation}</div>
         {listing.condition && listing.condition !== "N/A" && (

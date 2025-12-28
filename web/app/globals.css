@@ -115,6 +115,20 @@ body {
   margin-bottom: 2px;
 }
 
+.listing-ai-price-green {
+  font-size: 13px;
+  font-weight: 500;
+  color: #00a400;
+  margin-bottom: 4px;
+}
+
+.listing-ai-price-red {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e41e3f;
+  margin-bottom: 4px;
+}
+
 .listing-title {
   font-size: 15px;
   color: #050505;
@@ -134,9 +148,8 @@ body {
 
 .listing-condition {
   font-size: 12px;
-  color: #1877f2;
+  color: #65676b;
   margin-top: 4px;
-  font-weight: 500;
 }
 
 .empty-state {

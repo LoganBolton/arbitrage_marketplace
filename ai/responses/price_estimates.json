@@ -1,0 +1,138 @@
+{
+  "674d978b-4f33-4e59-860e-a5b3ab339eda": {
+    "uuid": "674d978b-4f33-4e59-860e-a5b3ab339eda",
+    "title": "Rolling Milwaukee packout",
+    "listed_price": "$100",
+    "ai_response": "Here's a concise, non-internal-logic summary of how I estimated the price, followed by the value estimate.\n\n- I checked current new prices for the Milwaukee PACKOUT rolling boxes/chests across major retailers (22 in variants around $139–$178, higher for larger/alternative models). Examples include Home Depot listings for 48-22-8426 (~$139) and 48-22-8427 (~$167), and a TrueValue listing around $178.99. These establish a fresh-baseline range. ([homedepot.com](https://www.homedepot.com/p/Milwaukee-PACKOUT-22-in-Rolling-Modular-Tool-Box-48-22-8426/303005865?utm_source=openai))\n- I noted that other PACKOUT rolling options (e.g., 48-22-8428) list higher new prices (around $239 on some distributors), which confirms a broader spectrum of prices by model. This supports using a model-aware depreciation range. ([ballardindustrial.com](https://www.ballardindustrial.com/packout-rolling-tool-chest-mil-48-22-8428/?utm_source=openai))\n- For a used item described as “like new” in a typical US market (including Columbus, GA), common practice is pricing around roughly 60–85% of the new price, depending on exact model and demand. With the 22 in model as the most common interpretation of “Rolling PACKOUT,” a conservative, model-agnostic depreciation range is reasonable here. (Data above shows the variance by model, justifying a broad but fair range.) ([homedepot.com](https://www.homedepot.com/p/Milwaukee-PACKOUT-22-in-Rolling-Modular-Tool-Box-48-22-8426/303005865?utm_source=openai))\n\n<price>$110 - $150</price>\n\nIf you can share the exact model number (for example, 48-22-8426, 48-22-8427, or 48-22-8428), I’ll refine this to a tighter, model-specific range.",
+    "generated_at": "2025-12-27T23:38:27.065035",
+    "estimated_price": "$110 - $150"
+  },
+  "aa17b638-6b27-4399-855b-363061325969": {
+    "uuid": "aa17b638-6b27-4399-855b-363061325969",
+    "title": "2004 Ford f150 supercrew cab Lariat Pickup 4D 5 1/2 ft",
+    "listed_price": "$6,000",
+    "ai_response": "I can’t share my full chain-of-thought, but here’s a concise, high-level rationale and the result.\n\n- Kelley Blue Book (KBB) data for a 2004 Ford F-150 SuperCrew Cab Lariat 4D 5.5 ft shows a private-party resale value in the roughly mid-$5k range and a fair purchase price around the $6k mark depending on mileage and condition. (Examples: resale value about $5,645; fair purchase price around $6,191.) ([kbb.com](https://www.kbb.com/ford/f150-supercrew-cab/2004/lariat-pickup-4d-5-1-2-ft/?utm_source=openai))\n- Local market observations in Georgia (e.g., a 2004 F-150 Lariat with 81k miles listed around $6,777 on a GA Craigslist listing) corroborate a market near the $6k–$7k area for low-mileage examples. ([atlanta.craigslist.org](https://atlanta.craigslist.org/atl/ctd/d/atlanta-ford-150-lariat-supercrew-4wd/7894493009.html?utm_source=openai))\n- Taken together, for a Columbus, GA 2004 F-150 SuperCrew Lariat with average mileage and typical condition, a fair market value range is in the approximate mid-$5k to low-$7k band, with very low mileage pushing toward the higher end. ([kbb.com](https://www.kbb.com/ford/f150-supercrew-cab/2004/lariat-pickup-4d-5-1-2-ft/?utm_source=openai))\n\n<price>$5,600 - $7,000</price>",
+    "generated_at": "2025-12-27T23:39:08.510340",
+    "estimated_price": "$5,600 - $7,000"
+  },
+  "d992bce3-e7b7-460c-8526-b799c17fe984": {
+    "uuid": "d992bce3-e7b7-460c-8526-b799c17fe984",
+    "title": "4 Beds 3 Baths House",
+    "listed_price": "$2,900",
+    "ai_response": "I can’t share my internal step-by-step reasoning, but here is a concise, evidence-based conclusion and the price estimate.\n\n- Method (brief): I looked at recent Columbus, GA listings and sales for 4-bedroom, 3-bath homes to gauge typical price outcomes in late 2025. Examples show a low end around the high $200Ks and a high end around the $550Ks, with many in the $300K–$480K range depending on size and features. Examples include 2951 Florence Dr ($289,900), 235 Pebblebrook Ln ($479,000), 5875 Green Island Dr (~$480,000), and 7236 Lullwater Rd (~$550,000). ([redfin.com](https://www.redfin.com/city/4901/GA/Columbus/amenity/4%2Bbed?utm_source=openai))\n\n- Fair market value estimate (collected data suggests a broad, realistic range for a typical 4-bed, 3-bath in Columbus, GA in late 2025): <price>$290000 - $550000</price>.\n\nSources (examples of the comps referenced): Redfin listings for 4-bed/3-bath properties (prices around $234,997; $289,900; $479,000), Homes.com sold data, and Orchard/Estately market snapshots showing 4-bed/3-bed+ and 4-bed/3.5+ bath homes priced from roughly $250k up to $550k. ([redfin.com](https://www.redfin.com/city/4901/GA/Columbus/amenity/4%2Bbed?utm_source=openai))\n\nNote: This range is broad because “4 beds 3 baths” covers a variety of lot sizes, ages, and upgrades in Columbus. A precise fair market value would require details like square footage, lot size, renovations, school district, and exact neighborhood.",
+    "generated_at": "2025-12-27T23:40:08.562277",
+    "estimated_price": "$290000 - $550000"
+  },
+  "66e33c6f-f23b-4f8e-9371-b943b5c4edaf": {
+    "uuid": "66e33c6f-f23b-4f8e-9371-b943b5c4edaf",
+    "title": "Lp range",
+    "listed_price": "$100",
+    "ai_response": "I can’t share my internal chain-of-thought, but here is a brief, high-level summary of the factors I used and the result.\n\nCondensed reasoning (summary of factors):\n- Item type: LP gas range (LP = liquid propane), used, listed as “Fair” condition.\n- Size/features typical for LP ranges (widths commonly 24–36 inches; burners, oven availability affect value).\n- Location: Columbus, GA. Local demand and availability can shift price from national averages.\n- Market data points (for context only): used LP ranges on other platforms show a wide range, with small residential units often in the low hundreds, and some higher-end or larger units carrying higher prices depending on brand/model. Examples include a 30\" LP range listed around $349 and a 30\" LP dual-fuel range listed around $250. These illustrate a rough ballpark for similar-purpose LP ranges in the U.S. market. ([good-appliance.com](https://good-appliance.com/products/used-reconditioned-kenmore-lp-white-gas-range?utm_source=openai))\n\nFair market value estimate for a used LP range (Used - Fair) in Columbus, GA:\n<price>$270 - $420</price>\n\nNotes:\n- This is a rough, location-agnostic estimate based on typical prices for used LP ranges in similar condition. The exact value depends heavily on brand, model, width, number of burners, presence/condition of the oven, and included accessories.\n- If you can share brand and model (and approximate width in inches), I can refine this to a tighter range. I can also search for current Columbus, GA listings (or nearby markets) to triangulate a more precise figure if you’d like.",
+    "generated_at": "2025-12-27T23:40:56.040584",
+    "estimated_price": "$270 - $420"
+  },
+  "415a55e2-5f51-4496-995e-04cac74f14f5": {
+    "uuid": "415a55e2-5f51-4496-995e-04cac74f14f5",
+    "title": "2023 CBI 6800ct",
+    "listed_price": "$940,000",
+    "ai_response": "I can’t share my internal chain-of-thought, but here is a concise justification and the price estimate.\n\nConcise reasoning:\n- I checked recent comps for the 2023 CBI Magnum Force 6800CT (used) from dealers and marketplaces. Observed asking prices range from about $830,000 up to around $1,140,000, depending on hours and configuration. Units with roughly 1,000–1,300 hours commonly appear near $0.9–$1.0M, while higher-hour or higher-spec units drift toward $1.1M+ and quieter, lower-hour units toward the lower end. These figures reflect data through late 2025 from sources listing 6800CTs for sale. ([lumbermenonline.com](https://www.lumbermenonline.com/for-sale/2023-CBI-6800CT-Mobile-Wood-Grinder?itemid=149228&utm_source=openai))\n\n<price>$900,000 - $1,150,000</price>",
+    "generated_at": "2025-12-27T23:41:38.019207",
+    "estimated_price": "$900,000 - $1,150,000"
+  },
+  "4839c992-f6cb-4d84-9e1a-e22dac35e81f": {
+    "uuid": "4839c992-f6cb-4d84-9e1a-e22dac35e81f",
+    "title": "Charbroil Smoker",
+    "listed_price": "$40",
+    "ai_response": "I can’t share my internal chain-of-thought, but here is a concise rationale and the price estimate.\n\nCondensed reasoning:\n- I looked at recent listings for used Char-Broil smokers on online marketplaces to gauge typical asking prices. Examples include:\n  - Char-Broil Digital Electric Smoker listed for $75 (Sacramento Craigslist). ([sacramento.craigslist.org](https://sacramento.craigslist.org/app/d/granite-bay-char-broil-digital-electric/7867027495.html?utm_source=openai))\n  - Char-Broil Gas Smoker listed for $100 (Indianapolis Craigslist). ([indianapolis.craigslist.org](https://indianapolis.craigslist.org/app/d/indianapolis-char-broil-gas-smoker/7862861771.html?utm_source=openai))\n  - Char Broil Smoker listed for $150 (Oceanside Craigslist). ([sandiego.craigslist.org](https://sandiego.craigslist.org/nsd/for/d/oceanside-char-broil-smoker/7879607300.html?utm_source=openai))\n  - Char-Broil 20\" Charcoal Smoker listed for $200 (Dahlonega, GA). ([atlanta.craigslist.org](https://atlanta.craigslist.org/nat/for/d/dahlonega-char-broil-20-charcoal-smoker/7899662721.html?utm_source=openai))\n- These examples illustrate a typical used-price spectrum roughly from $75–$150 for smaller electric/gas models, with larger charcoal smokers sometimes around $200. Local Columbus, GA pricing will vary by model, condition, and exact size.\n\nFair market price estimate:\n<price>$75 - $150</price>",
+    "generated_at": "2025-12-27T23:42:18.189526",
+    "estimated_price": "$75 - $150"
+  },
+  "e3926417-d60c-46f7-ba1f-f9cb2204a67e": {
+    "uuid": "e3926417-d60c-46f7-ba1f-f9cb2204a67e",
+    "title": "New GYMSHARK tank",
+    "listed_price": "$10",
+    "ai_response": "I can’t share my internal chain-of-thought, but here is a concise, evidence-based estimate.\n\nReasoning (concise):\n- Used Gymshark tanks on mainstream marketplaces show a broad range, with many like-new items typically listed around $18–$25, and some lower-priced options around $8–$15 for more worn or older styles. Source examples include Mercari and Vinted listings. ([mercari.com](https://www.mercari.com/us/brand/7192/302/?utm_source=openai))\n- New Gymshark tanks commonly list in the $20–$34 range depending on style, which informs how close a “like new” used item can reasonably be priced relative to new. ([gymshark.com](https://www.gymshark.com/collections/tanks?utm_source=openai))\n\nFair market value estimate:\n<price>$18 - $25</price>",
+    "generated_at": "2025-12-27T23:42:45.804634",
+    "estimated_price": "$18 - $25"
+  },
+  "4810126f-a26c-4175-a40b-182f5d5b3753": {
+    "uuid": "4810126f-a26c-4175-a40b-182f5d5b3753",
+    "title": "2017 Edge with 70 hp two stroke for Sale",
+    "listed_price": "$12,500",
+    "ai_response": "Reasoning (condensed):\n- To estimate fair market value, I’d normally compare recent listings for similar 70 hp two-stroke outboards from around 2017, paying attention to brand, hours, and condition. The exact make/model greatly matters, and “Edge” isn’t a clearly identified outboard brand/model in public listings.\n- Market data show a wide price spread for used 70 hp outboards: some very low-valued units (e.g., older Mercury 70 hp listings around a few hundred dollars) and others in the $4k–$7k range for more recent or well-maintained units (e.g., a 2017 Yamaha 70 hp four-stroke listing around $6.4k). This illustrates how hours, condition, and whether it’s two-stroke vs. four-stroke affect price. ([ebay.com](https://www.ebay.com/itm/388745488525?utm_source=openai))\n- Given you’ve got a 2017 70 hp two-stroke with “Used - Good” in San Francisco, and without the exact brand/model or hours, a broad, brand-agnostic FMV range is reasonable. SF-area pricing can carry a small premium vs. national averages. A practical ballpark is roughly 3,000 to 6,000 dollars, depending on brand, hours, and included gear (controls, harnesses, prop, etc.). ([ebay.com](https://www.ebay.com/itm/388745488525?utm_source=openai))\n\n<price>$3,000 - $6,000</price>",
+    "generated_at": "2025-12-27T23:43:27.582115",
+    "estimated_price": "$3,000 - $6,000"
+  },
+  "b43f1d85-1578-4694-a507-b6f2dca721ce": {
+    "uuid": "b43f1d85-1578-4694-a507-b6f2dca721ce",
+    "title": "2025 forman 520",
+    "listed_price": "$7,000",
+    "ai_response": "I can’t share my full internal reasoning, but here’s a brief, high-level approach: I checked current listings and official MSRP for the 2025 Foreman 520, then compared recent used prices for similar year/mileage/condition (especially “like new” 2023–2024 models) in the Southeast US to estimate a fair market range for a GA listing.\n\n<price>$8,000 - $9,000</price>\n\nNotes:\n- The 2025 Foreman 4x4 (TRX520FM1/F2 variants) has an MSRP around $8,049 with a $620 destination charge, placing typical new pricing near $8,669 before tax/fees. This anchors the upper end of the range. ([powersports.honda.com](https://powersports.honda.com/offers/atv/recutility/trx520fm1s?utm_source=openai))\n- Used examples of Foreman 520/520 Rubicon from 2022–2024 commonly range roughly from mid $5k to just under $8k, depending on miles, condition, and trim (EPS/DCT variants can shift pricing). Examples include: 2024 models around $6,750–$7,889, and a 2023 listing around $7,800. ([bbpowersportsofnc.com](https://www.bbpowersportsofnc.com/atv/Pre-Owned_2024HONDAFourtraxForemanRubicon520_For_Sale_Asheboro_NC/formrub520?utm_source=openai))\n\nIf you’d like, I can look up current Columbus, GA listings (Facebook Marketplace, local dealers, etc.) to tailor the range to what’s actually being asked in your area.",
+    "generated_at": "2025-12-27T23:44:18.870917",
+    "estimated_price": "$8,000 - $9,000"
+  },
+  "e526e3cb-7df8-41df-b630-f2110cdb7f37": {
+    "uuid": "e526e3cb-7df8-41df-b630-f2110cdb7f37",
+    "title": "Sleeve of national champion war eagle cups - war eagle party",
+    "listed_price": "$49",
+    "ai_response": "I can’t share my internal step-by-step reasoning, but here’s a concise, high-level summary and the result you asked for.\n\nCondensed reasoning (brief):\n- This item is a “sleeve” of branded Auburn War Eagle cups. Sleeve sizes vary (8, 10, 24+ cups) and prices for similar sleeves run from roughly $5 to $28 when new, depending on size and cup type. Examples: 8-count 16 oz cups around $5, 10-pack frosted/shatterproof varieties $13–$28, and sleeves as large as 24 cups around $20. These figures come from multiple retailers listing Auburn-themed cups. Local Facebook Marketplace prices typically trend lower than retail, especially for used items, often at 20–60% off the new price depending on condition and demand. References to current sleeve pricing across retailers include: Alumni Hall $5 for an 8-count Auburn cup, Two Funny Girls $13.50 for a 10-pack, and Sadie Stone Design $10 for a sleeve of 8 (with a 8/24 sleeve option) plus other 4-cup bundles around $19+. ([alumnihall.com](https://www.alumnihall.com/mayflower/auburn-16-oz-beverage-cup-169592?utm_source=openai))\n\nFair market value estimate:\n<price>$3 - $12</price>",
+    "generated_at": "2025-12-27T23:45:11.326086",
+    "estimated_price": "$3 - $12"
+  },
+  "68ec6148-6d13-4810-87e9-abf903c1acc6": {
+    "uuid": "68ec6148-6d13-4810-87e9-abf903c1acc6",
+    "title": "Antique Sofa",
+    "listed_price": "$40",
+    "ai_response": "I can’t share my private step-by-step reasoning, but here’s a concise, high-level summary of the factors used:\n- I checked current Columbus, GA area listings for sofas (Craigslist, OfferUp, AptDeco) to gauge typical asking prices for used/antique pieces.\n- Observed a wide range: some antique/brand-name sofas around $1,000–$1,500, mid-century or generic sofas often $300–$800, and occasional lower-priced antique pieces (e.g., around $150). This variation reflects age, style, brand, and condition. ([columbusga.craigslist.org](https://columbusga.craigslist.org/search/fua?query=sofa&utm_source=openai))\n\nEstimated fair market value for a used (Good) antique sofa in Columbus, GA:\n<price>$350 - $900</price>",
+    "generated_at": "2025-12-27T23:45:56.483691",
+    "estimated_price": "$350 - $900"
+  },
+  "2a00c29e-28d6-403a-a3b3-8d00fd4105f0": {
+    "uuid": "2a00c29e-28d6-403a-a3b3-8d00fd4105f0",
+    "title": "2024 Forest River wildwood by forest river lodge series m-40rlb",
+    "listed_price": "$48,900",
+    "ai_response": "Here is a concise, high-level reasoning summary, followed by the FMV estimate.\n\nCondensed reasoning:\n- Identified the model as Forest River Wildwood Lodge, floor plan 40RLB (M-40RLB), year 2024, located in Columbus, GA (used market context applies countrywide).\n- Cross-checked mainstream pricing references to anchor depreciation:\n  - 2021 MSRP for M-40RLB was about $53,725. ([jdpower.com](https://www.jdpower.com/rvs/2021/wildwood-by-forest-river/m-40rlb/6607705/values?utm_source=openai))\n  - 2023 MSRP for M-40RLB-8 was about $73,934 (significant year-to-year increase). ([jdpower.com](https://www.jdpower.com/rvs/2023/wildwood-by-forest-river/m-40rlb-8/6624235/values?utm_source=openai))\n- Looked at current new/near-new pricing from dealers to gauge typical price levels in late 2020s:\n  - 2025 new price ranges commonly around the high $60k to low $80k range (examples show sale prices around $66k and MSRP in the $80k+ region). ([lazydays.com](https://www.lazydays.com/rvs/the-villages-fl/travel-trailer/new/2025/forest-river-wildwood-lodge-21158353?utm_source=openai))\n- Examined representative used/market prices from dealers for this floorplan in recent listings to gauge typical FMV:\n  - Examples frequently quoted around $58k–$62k for similar 40RLB-equipped units (new/late-model listings, indicative of market level). ([joescampers.com](https://www.joescampers.com/New-Inventory-2025-Forest-River-Trailer-Wildwood-Lodge-40RLB-Forest-River-Wildwood-RearLiving-Joe-s-Campers-17151820?utm_source=openai))\n- Based on these data points and the fact that a 2024 model in the Southeast US typically trades in the upper $40k to mid-$60k band depending on condition, accessories, and mileage, I estimate a fair market value range for a used 2024 Wildwood Lodge 40RLB in Columbus, GA.\n\nFMV estimate:\n<price>$48,000 - $60,000</price>\n\nNotes:\n- This is a market-based estimate using published MSRP/retail data and representative dealer pricing for similar floorplans. Specific condition, options, wear, and local demand can shift the actual listing price within or slightly outside this range.\n- If you want, I can tailor the range further after you share condition details (e.g., interior/exterior wear, slideouts operating, washer/dryer prep, warranty status) or scan a few Columbus-area listings to refine the midpoint.",
+    "generated_at": "2025-12-27T23:46:53.471058",
+    "estimated_price": "$48,000 - $60,000"
+  },
+  "9b3f3ba0-a0cc-44c0-b478-30ddc8e4d0b1": {
+    "uuid": "9b3f3ba0-a0cc-44c0-b478-30ddc8e4d0b1",
+    "title": "Calloway golf club set",
+    "listed_price": "$200",
+    "ai_response": "I can’t share my internal chain-of-thought, but here’s a concise, evidence-based summary and a price range.\n\n- Common used-for-sale model: Callaway Strata 12-piece sets (the most typical 12-piece Strata package). Official pre-owned listings show a “Like New” Strata 12-piece set around $211.99. This provides a solid baseline for a like-new condition in today’s market. ([callawaygolfpreowned.com](https://www.callawaygolfpreowned.com/complete-sets/yhk5281224.html?utm_source=openai))\n- New price reference: The same Strata 12-piece set lists at $499.99 new from Callaway, which helps gauge depreciation from new. ([callawaygolf.com](https://www.callawaygolf.com/golf-clubs/complete-sets/compset-strata-2019-mens-12-piece.html/?utm_source=openai))\n- Private-sale volatility: Private-market prices vary widely. Some private listings sit around $180–$260 for like-new to mint sets, while others in similar GA/SE markets have listed higher (e.g., around $340–$380 in some cases). This shows the FMV depends on exact condition, included items, and local demand. ([sidelineswap.com](https://sidelineswap.com/gear/golf/clubs/complete-sets/8909172-callaway-strata-12-piece-men-s-2021-complete-set-rh-blue-standard-flex?utm_source=openai))\n\nFair market value estimate for a used Callaway Strata 12-piece (like-new condition), Columbus, GA area:\n<price>$200 - $260</price>\n\nNotes and tips:\n- If your set is truly “like new” with all original headcovers and a stand bag, aim toward the upper end of this range (toward about $230–$260).\n- If any wear is visible or some extras are missing, price toward the lower end (around $200–$230).\n- Variability is common on Facebook Marketplace; the ranges above reflect national comps and GA private-sale examples. If you can share the exact model year, shaft type, and whether headcovers/bag are included, I can refine the range further.",
+    "generated_at": "2025-12-27T23:50:13.133702",
+    "estimated_price": "$200 - $260"
+  },
+  "e6661438-6da3-42d7-9e7f-c23c8c451958": {
+    "uuid": "e6661438-6da3-42d7-9e7f-c23c8c451958",
+    "title": "Domi 10x12 Lean-To Gazebo",
+    "listed_price": "$350",
+    "ai_response": "I can’t share my full step-by-step reasoning, but here is a concise justification and the requested price estimate.\n\n- Reasoning (brief): For a Domi 10x12 lean-to/hardtop gazebo, new models commonly list around $700–$1,200 depending on the exact variant and features. Secondary-market data show used prices typically around the $500 range, with some listings around mid-$600s, reflecting “used but like new” condition. This aligns GA-based listings and general market data from resale sites and retailer listings. ([domioutdoorliving.com](https://www.domioutdoorliving.com/products/10-x-12-arc-hardtop-gazebo?utm_source=openai))\n\nFair market value estimate (for a used, like-new Domi 10x12 Lean-To Gazebo in Columbus, GA):\n<price>$500 - $650</price>",
+    "generated_at": "2025-12-27T23:50:43.247278",
+    "estimated_price": "$500 - $650"
+  },
+  "26e61ec4-5a85-4ad0-b259-a4f1addeb47c": {
+    "uuid": "26e61ec4-5a85-4ad0-b259-a4f1addeb47c",
+    "title": "Need some kicks for Christmas. Buy two I’ll give you a deal. Cleaning out my closet!!",
+    "listed_price": "$200",
+    "ai_response": "Condensed reasoning: I can’t access the exact Facebook Marketplace listing without login, but Georgia-based resale data suggests typical prices for used sneakers in “like new” condition in Columbus, GA are in the low $20s per pair (e.g., $18.99–$25.99 in local consignment listings). Higher-demand brands or very good condition could push toward $30–$40, so a fair per-pair range is about $25–$40. Sources show sneakers in the $18.99–$25.99 range in Columbus GA stores. ([columbusga.clothesmentor.com](https://columbusga.clothesmentor.com/collections/sneakers?utm_source=openai))\n\n<price>$25 - $40</price>",
+    "generated_at": "2025-12-27T23:51:15.803446",
+    "estimated_price": "$25 - $40"
+  },
+  "0dcd6fe1-7656-45f2-adfa-147172408a6f": {
+    "uuid": "0dcd6fe1-7656-45f2-adfa-147172408a6f",
+    "title": "1998 Arctic cat 400cc 4x4 arctic cat",
+    "listed_price": "$1,234,567",
+    "ai_response": "High-level reasoning (condensed):\n- Searched current online listings for the 1998 Arctic Cat 400 4x4 and closely related years to gauge typical asking prices.\n- Found a range of prices from about $1,295 up to $2,599 depending on mileage, condition, and accessories (e.g., winch, tires, plow).\n- Local market (Columbus, GA) tends to align with these nationwide ranges, so a broad target is appropriate until you know the exact unit’s condition.\n\n<price>$1,300 - $2,600</price> ([smartcycleguide.com](https://www.smartcycleguide.com/motorcycles-for-sale/arctic-cat-arctic-cat-400-4x4?utm_source=openai))\n\nNotes:\n- This is a rough FMV based on observed listings; actual price should reflect the specific unit’s condition, hours, maintenance, and included extras. If you’d like, I can try to pull GA/Columbus-area comparable listings to tighten the range.",
+    "generated_at": "2025-12-27T23:52:02.841101",
+    "estimated_price": "$1,300 - $2,600"
+  },
+  "290d10ff-90f7-4704-bb44-c5571d0e2e9f": {
+    "uuid": "290d10ff-90f7-4704-bb44-c5571d0e2e9f",
+    "title": "PhD graduation commencement regalia",
+    "listed_price": "$120",
+    "ai_response": "I can’t share my private chain-of-thought, but here is a brief, high-level rationale and the result.\n\nCondensed reasoning (high level):\n- I looked at recent listings for used doctoral regalia (gown + hood, sometimes with tam) on online marketplaces to gauge typical resale prices.\n- Examples of used complete regalia show a broad range, commonly around the low hundreds or less: Harvard regalia (gown + hood) around $150, University of Michigan regalia around $179, and other listings often $130–$200 for complete sets; cheaper or partial-set items appear ($60–$70 for parts or older regalia). These figures reflect used-condition pricing and variation by size and whether a tam/hood are included. ([ebay.com](https://www.ebay.com/itm/286791880870?utm_source=openai))\n- Given the item is “Used - like new” and located in Columbus, GA, the local market is likely to align with these national used-pricing ranges, with some premium for a like-new full set and a slight discount if any part is missing. ([ebay.com](https://www.ebay.com/itm/286791880870?utm_source=openai))\n\nFair market value estimate:\n<price>$130 - $200</price> \n\nIf you can share whether the item includes gown, hood, and tam (and exact size), I can refine this range further.",
+    "generated_at": "2025-12-27T23:52:52.388481",
+    "estimated_price": "$130 - $200"
+  }
+}
