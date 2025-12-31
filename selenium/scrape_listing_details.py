@@ -146,18 +146,8 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
         except:
             listing_data["price"] = "N/A"
 
-        # Extract location
-        try:
-            location_elems = driver.find_elements(By.CSS_SELECTOR, 'span.x1lliihq.x6ikm8r.x10wlt62.x1n2onr6.xlyipyv.xuxw1ft')
-            for elem in location_elems:
-                text = elem.text
-                if any(state in text for state in ["AL", "GA", "FL", "TX", "NY", "CA", "NC", "SC", "TN", "VA", "MS", "LA", "AR"]):
-                    listing_data["location"] = text
-                    break
-            if "location" not in listing_data:
-                listing_data["location"] = "N/A"
-        except:
-            listing_data["location"] = "N/A"
+        # Extract location - will be updated later from seller_location for accuracy
+        listing_data["location"] = "N/A"
 
         # Extract description - try multiple approaches
         try:
@@ -370,13 +360,13 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
         # Calculate approximate listing date from relative date
         listing_data["calculated_listing_date"] = parse_relative_date(listing_data["posted_date"])
 
-        # Extract seller location from posted_date (e.g., "Listed 2 weeks ago in Auburn, AL")
+        # Extract location from posted_date (e.g., "Listed 2 weeks ago in Auburn, AL")
         try:
             posted = listing_data.get("posted_date", "")
             match = re.search(r'\bin\s+(.+)$', posted)
-            listing_data["seller_location"] = match.group(1).strip() if match else "N/A"
+            listing_data["location"] = match.group(1).strip() if match else "N/A"
         except:
-            listing_data["seller_location"] = "N/A"
+            listing_data["location"] = "N/A"
 
         # Extract availability status
         try:
