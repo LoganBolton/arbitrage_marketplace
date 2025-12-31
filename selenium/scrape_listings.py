@@ -1,5 +1,7 @@
 import json
 import time
+from datetime import datetime
+from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -85,12 +87,20 @@ def main():
 
         listings = scrape_marketplace_listings(driver, max_scrolls=3)
 
-        output_file = "scraped_data/marketplace_listings.json"
+        # Create timestamped output directory
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        script_dir = Path(__file__).parent
+        output_dir = script_dir / "scraped_data" / timestamp
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        output_file = output_dir / "marketplace_listings.json"
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(listings, f, indent=2, ensure_ascii=False)
 
         print(f"\nScraped {len(listings)} unique listings")
         print(f"Saved to {output_file}")
+        print(f"\nRun detailed scraper with:")
+        print(f"  python scrape_listing_details.py --input {timestamp}")
 
     finally:
         driver.quit()

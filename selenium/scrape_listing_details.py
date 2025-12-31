@@ -463,6 +463,15 @@ def scrape_single_listing(args):
                 pass
 
 
+def get_latest_run(scraped_data_dir):
+    """Find the most recent timestamped run folder"""
+    runs = [d for d in scraped_data_dir.iterdir()
+            if d.is_dir() and d.name[0].isdigit()]
+    if not runs:
+        return None
+    return max(runs, key=lambda x: x.name)
+
+
 def main():
     global completed_count
 
@@ -470,6 +479,7 @@ def main():
     parser = argparse.ArgumentParser(description='Scrape Facebook Marketplace listing details')
     parser.add_argument('--no-parallel', action='store_true', help='Disable parallel mode (run sequentially)')
     parser.add_argument('--workers', type=int, default=4, help='Number of parallel workers (default: 4)')
+    parser.add_argument('--input', type=str, help='Timestamp folder to read from (e.g., 2025-12-30_143022). Uses latest if not specified.')
     args = parser.parse_args()
 
     parallel_mode = not args.no_parallel
@@ -477,12 +487,30 @@ def main():
 
     # Setup paths
     script_dir = Path(__file__).parent
-    input_file = script_dir / "scraped_data" / "marketplace_listings.json"
-    output_dir = script_dir / "scraped_data" / "detailed_listings"
+    scraped_data_dir = script_dir / "scraped_data"
+
+    # Find input folder
+    if args.input:
+        run_dir = scraped_data_dir / args.input
+        if not run_dir.exists():
+            print(f"Error: Run folder '{args.input}' not found")
+            return
+    else:
+        run_dir = get_latest_run(scraped_data_dir)
+        if not run_dir:
+            print("Error: No run folders found. Run scrape_listings.py first.")
+            return
+        print(f"Using latest run: {run_dir.name}")
+
+    input_file = run_dir / "marketplace_listings.json"
+    if not input_file.exists():
+        print(f"Error: {input_file} not found")
+        return
+
+    output_dir = run_dir
     html_dir = output_dir / "raw_html"
 
     # Create output directories
-    output_dir.mkdir(exist_ok=True)
     html_dir.mkdir(exist_ok=True)
 
     # Load existing listings

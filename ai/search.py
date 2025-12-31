@@ -52,11 +52,13 @@ def main():
         Condition: {condition}
         Location: {location}
 
-        List a condensed form of your reasoning and then output a fair market value estimate in <price>$XXX - $XXX</price> format."""
+        List a condensed form of your sources and then output a fair market value estimate in <price>$XXX - $XXX</price> format."""
 
         response = client.responses.create(
             model="gpt-5-nano-2025-08-07",
             tools=[{"type": "web_search"}],
+            reasoning={"effort": "low"},
+            text={"verbosity": "low"},
             input=find_price_prompt
         )
 
