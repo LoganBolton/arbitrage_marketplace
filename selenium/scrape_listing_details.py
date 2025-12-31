@@ -264,42 +264,6 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
         except:
             listing_data["condition"] = "N/A"
 
-        # Extract category
-        try:
-            category_elems = driver.find_elements(By.XPATH, '//span[contains(text(), "Category")]/following-sibling::span')
-            if not category_elems:
-                category_elems = driver.find_elements(By.XPATH, '//div[contains(text(), "Category")]/..//span[not(contains(text(), "Category"))]')
-            listing_data["category"] = category_elems[0].text if category_elems else "N/A"
-        except:
-            listing_data["category"] = "N/A"
-
-        # Extract seller name
-        try:
-            seller_selectors = [
-                'a.x1i10hfl.xjbqb8w.x1ejq31n.xd10rxx.x1sy0etr.x17r0tee.x972fbf.xcfux6l.x1qhh985.xm0m39n.x9f619',
-                'a[role="link"] span',
-                'div[role="article"] a span'
-            ]
-            seller_name = "N/A"
-            for selector in seller_selectors:
-                try:
-                    seller_elem = driver.find_element(By.CSS_SELECTOR, selector)
-                    if seller_elem.text and len(seller_elem.text) > 1:
-                        seller_name = seller_elem.text
-                        break
-                except:
-                    continue
-            listing_data["seller_name"] = seller_name
-        except:
-            listing_data["seller_name"] = "N/A"
-
-        # Extract seller location (separate from item location)
-        try:
-            seller_location_elems = driver.find_elements(By.XPATH, '//span[contains(text(), "Member since")]/../following-sibling::div//span')
-            listing_data["seller_location"] = seller_location_elems[0].text if seller_location_elems else "N/A"
-        except:
-            listing_data["seller_location"] = "N/A"
-
         # Extract all images using multiple methods for consistency
         image_urls = []
         try:
@@ -405,6 +369,14 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
 
         # Calculate approximate listing date from relative date
         listing_data["calculated_listing_date"] = parse_relative_date(listing_data["posted_date"])
+
+        # Extract seller location from posted_date (e.g., "Listed 2 weeks ago in Auburn, AL")
+        try:
+            posted = listing_data.get("posted_date", "")
+            match = re.search(r'\bin\s+(.+)$', posted)
+            listing_data["seller_location"] = match.group(1).strip() if match else "N/A"
+        except:
+            listing_data["seller_location"] = "N/A"
 
         # Extract availability status
         try:
