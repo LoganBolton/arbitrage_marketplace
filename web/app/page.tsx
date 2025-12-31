@@ -26,14 +26,41 @@ interface PriceEstimate {
   estimated_price?: string;
 }
 
+async function getLatestRun(): Promise<string | null> {
+  const scrapedDataDir = path.join(
+    process.cwd(),
+    "..",
+    "selenium",
+    "scraped_data"
+  );
+
+  try {
+    const entries = await fs.readdir(scrapedDataDir, { withFileTypes: true });
+    const runs = entries
+      .filter((e) => e.isDirectory() && /^\d{4}-\d{2}-\d{2}/.test(e.name))
+      .map((e) => e.name)
+      .sort();
+
+    return runs.length > 0 ? runs[runs.length - 1] : null;
+  } catch {
+    return null;
+  }
+}
+
 async function getListings(): Promise<Listing[]> {
+  const latestRun = await getLatestRun();
+  if (!latestRun) {
+    console.error("No run folders found");
+    return [];
+  }
+
   const filePath = path.join(
     process.cwd(),
     "..",
     "selenium",
     "scraped_data",
-    "detailed_listings",
-    "detailed_listings_progress.json"
+    latestRun,
+    "detailed_listings.json"
   );
 
   try {
@@ -46,15 +73,18 @@ async function getListings(): Promise<Listing[]> {
 }
 
 async function getPriceEstimates(): Promise<Record<string, PriceEstimate>> {
-  const filePath = path.join(
-    process.cwd(),
-    "..",
-    "ai",
-    "responses",
-    "price_estimates.json"
-  );
+  const responsesDir = path.join(process.cwd(), "..", "ai", "responses");
 
   try {
+    const files = await fs.readdir(responsesDir);
+    const priceFiles = files
+      .filter((f) => f.startsWith("price_estimates_") && f.endsWith(".json"))
+      .sort();
+
+    if (priceFiles.length === 0) return {};
+
+    const latestFile = priceFiles[priceFiles.length - 1];
+    const filePath = path.join(responsesDir, latestFile);
     const data = await fs.readFile(filePath, "utf-8");
     return JSON.parse(data);
   } catch (error) {

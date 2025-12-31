@@ -1,9 +1,21 @@
 import json
 import re
 import os
+import glob
 
 script_dir = os.path.dirname(__file__)
-responses_path = os.path.join(script_dir, "responses", "price_estimates.json")
+responses_dir = os.path.join(script_dir, "responses")
+
+# Find the latest price_estimates file
+pattern = os.path.join(responses_dir, "price_estimates_*.json")
+files = glob.glob(pattern)
+
+if not files:
+    print("Error: No price_estimates files found")
+    exit(1)
+
+responses_path = max(files)  # Latest by filename (timestamp)
+print(f"Using: {os.path.basename(responses_path)}")
 
 with open(responses_path, "r") as f:
     responses = json.load(f)
