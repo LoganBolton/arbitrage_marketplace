@@ -3,6 +3,7 @@ import json
 import re
 import time
 import uuid
+from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from threading import Lock
@@ -16,6 +17,57 @@ from selenium.webdriver.support import expected_conditions as EC
 # Thread-safe progress tracking
 progress_lock = Lock()
 completed_count = 0
+
+
+def parse_relative_date(posted_date_str):
+    """Parse relative date string and return calculated date"""
+    if not posted_date_str or posted_date_str == "N/A":
+        return None
+
+    today = datetime.now()
+    text = posted_date_str.lower()
+
+    # Extract the relative time part
+    # e.g., "Listed 2 weeks ago in Auburn, AL" -> "2 weeks ago"
+
+    if "today" in text:
+        return today.strftime("%Y-%m-%d")
+
+    if "yesterday" in text:
+        return (today - timedelta(days=1)).strftime("%Y-%m-%d")
+
+    # Match patterns like "X minutes/hours/days/weeks/months ago"
+    match = re.search(r'(\d+)\s*(minute|hour|day|week|month)s?\s*ago', text)
+    if match:
+        amount = int(match.group(1))
+        unit = match.group(2)
+
+        if unit == "minute":
+            calculated = today - timedelta(minutes=amount)
+        elif unit == "hour":
+            calculated = today - timedelta(hours=amount)
+        elif unit == "day":
+            calculated = today - timedelta(days=amount)
+        elif unit == "week":
+            calculated = today - timedelta(weeks=amount)
+        elif unit == "month":
+            calculated = today - timedelta(days=amount * 30)  # Approximate
+        else:
+            return None
+
+        return calculated.strftime("%Y-%m-%d")
+
+    # Handle "a week ago", "an hour ago", etc.
+    if re.search(r'\b(a|an)\s+week\s+ago', text):
+        return (today - timedelta(weeks=1)).strftime("%Y-%m-%d")
+    if re.search(r'\b(a|an)\s+month\s+ago', text):
+        return (today - timedelta(days=30)).strftime("%Y-%m-%d")
+    if re.search(r'\b(a|an)\s+day\s+ago', text):
+        return (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    if re.search(r'\b(a|an)\s+hour\s+ago', text):
+        return (today - timedelta(hours=1)).strftime("%Y-%m-%d")
+
+    return None
 
 
 def create_chrome_driver():
@@ -350,6 +402,9 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
                 listing_data["posted_date"] = "N/A"
         except:
             listing_data["posted_date"] = "N/A"
+
+        # Calculate approximate listing date from relative date
+        listing_data["calculated_listing_date"] = parse_relative_date(listing_data["posted_date"])
 
         # Extract availability status
         try:
