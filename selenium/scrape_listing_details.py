@@ -1,10 +1,33 @@
+import argparse
 import json
+import re
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from threading import Lock
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
+# Thread-safe progress tracking
+progress_lock = Lock()
+completed_count = 0
+
+
+def create_chrome_driver():
+    """Create a new Chrome driver instance"""
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    return webdriver.Chrome(options=chrome_options)
 
 
 def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, html_dir=None):
@@ -12,7 +35,17 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
     try:
         print(f"\nScraping listing {listing_id}...")
         driver.get(listing_url)
-        time.sleep(3)  # Wait for page to load
+
+        # Wait for page to load properly - try to wait for key elements
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'img[src*="scontent"]'))
+            )
+        except:
+            pass  # Continue anyway if timeout
+
+        # Additional wait for dynamic content
+        time.sleep(2)
 
         # Generate UUID if not provided
         if listing_uuid is None:
@@ -77,31 +110,75 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
         # Extract description - try multiple approaches
         try:
             description = "N/A"
+            title = listing_data.get("title", "")
 
-            # Method 1: Look for description in specific divs
-            desc_selectors = [
-                'div.xz9dl7a.x4uap5.xsag5q8.xkhd6sd.x126k92a',
-                'div.x1iorvi4.x4uap5.xjkvuk6.xkhd6sd',
-                'div[style*="text-align: start"]'
-            ]
+            # Method 1: Extract from og:description meta tag (most reliable - has full text)
+            try:
+                og_desc = driver.find_element(By.CSS_SELECTOR, 'meta[property="og:description"]')
+                content = og_desc.get_attribute('content')
+                if content and len(content) > 5:
+                    description = content
+                    print(f"Got description from og:description meta tag")
+            except:
+                pass
 
-            for selector in desc_selectors:
-                try:
-                    desc_elem = driver.find_element(By.CSS_SELECTOR, selector)
-                    if desc_elem.text and len(desc_elem.text) > 10:
-                        description = desc_elem.text
-                        break
-                except:
-                    continue
-
-            # Method 2: Look for longer text spans
+            # Method 2: Look for "See more" button and get parent container's text (fallback)
             if description == "N/A":
-                all_spans = driver.find_elements(By.TAG_NAME, 'span')
-                for span in all_spans:
-                    text = span.text
-                    if text and len(text) > 50 and text != listing_data.get("title"):
-                        description = text
-                        break
+                try:
+                    see_more_elems = driver.find_elements(By.XPATH, '//span[contains(text(), "See more")]')
+                    for see_more in see_more_elems:
+                        try:
+                            # Get the parent container that holds the description
+                            parent = see_more.find_element(By.XPATH, './ancestor::div[contains(@class, "x1iorvi4") or contains(@class, "xz9dl7a")]')
+                            if parent:
+                                text = parent.text.replace("See more", "").strip()
+                                if text and len(text) > 10:
+                                    description = text
+                                    break
+                        except:
+                            continue
+                except:
+                    pass
+
+            # Method 3: Look for description div after the listing details section
+            if description == "N/A":
+                desc_selectors = [
+                    'div.xz9dl7a.x4uap5.xsag5q8.xkhd6sd.x126k92a',
+                    'div.x1iorvi4.x4uap5.xjkvuk6.xkhd6sd',
+                    'div[style*="text-align: start"]'
+                ]
+                for selector in desc_selectors:
+                    try:
+                        desc_elems = driver.find_elements(By.CSS_SELECTOR, selector)
+                        for desc_elem in desc_elems:
+                            text = desc_elem.text
+                            # Filter out sidebar content (contains "Today's picks" or many $ signs or location lists)
+                            if text and len(text) > 10:
+                                if "Today's picks" in text or text.count('$') > 3 or text.count('\n') > 10:
+                                    continue
+                                # Make sure it's not just the title repeated
+                                if text.strip() != title.strip():
+                                    description = text
+                                    break
+                        if description != "N/A":
+                            break
+                    except:
+                        continue
+
+            # Method 4: Look for spans with description-like content
+            if description == "N/A":
+                try:
+                    # Find all spans and look for ones that look like descriptions
+                    spans = driver.find_elements(By.CSS_SELECTOR, 'span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x1lliihq.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.x4zkp8e.x676frb.x1nxh6w3.x1sibtaa.xo1l8bm.xi81zsa')
+                    for span in spans:
+                        text = span.text
+                        if text and len(text) > 20 and text != title:
+                            # Filter out price-like or location-like content
+                            if not text.startswith('$') and "Today's picks" not in text:
+                                description = text
+                                break
+                except:
+                    pass
 
             listing_data["description"] = description
             if description != "N/A":
@@ -171,42 +248,93 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
         except:
             listing_data["seller_location"] = "N/A"
 
-        # Extract all images (only from the listing gallery container)
+        # Extract all images using multiple methods for consistency
         image_urls = []
         try:
-            # Find the main listing image gallery container using the specific class combination
-            gallery_container = driver.find_elements(By.CSS_SELECTOR, 'div.x6s0dn4.x78zum5.x1y1aw1k.xwib8y2.xu6gjpd.x11xpdln.x1r7x56h.xuxw1ft.xc9qbxq.xw2csxc.x10wlt62.xish69e')
+            # Method 1: Look for the main listing photo viewer (most reliable)
+            # This targets the left panel where listing images are displayed
+            try:
+                # Find images in the main photo area - look for large images first
+                main_images = driver.find_elements(By.CSS_SELECTOR, 'img[src*="scontent"][src*="s960x960"], img[src*="scontent"][src*="p960x960"], img[src*="scontent"][src*="p720x720"]')
+                for img in main_images:
+                    src = img.get_attribute('src')
+                    if src and 'profile' not in src.lower():
+                        image_urls.append(src)
+                if image_urls:
+                    print(f"Found {len(image_urls)} images via large image selector")
+            except:
+                pass
 
-            if gallery_container:
-                print(f"Found listing image container")
-                # Get all images within this specific container
-                img_elements = gallery_container[0].find_elements(By.TAG_NAME, 'img')
+            # Method 2: Find gallery navigation dots to determine image count, then get visible images
+            if not image_urls:
+                try:
+                    # Look for navigation dots that indicate multiple images
+                    nav_dots = driver.find_elements(By.CSS_SELECTOR, 'div[role="tablist"] div[role="tab"]')
+                    expected_count = len(nav_dots) if nav_dots else 1
 
-                for img in img_elements:
-                    try:
+                    # Find images in the visible photo container
+                    photo_containers = driver.find_elements(By.CSS_SELECTOR, 'div[data-visualcompletion="media-vc-image"] img')
+                    for img in photo_containers:
                         src = img.get_attribute('src')
-                        if src and 'scontent' in src and src not in image_urls:
-                            # Exclude profile pictures
-                            if 'profile' not in src.lower():
-                                image_urls.append(src)
-                    except:
-                        continue
-            else:
-                print("Warning: Could not find listing image container with expected class")
+                        if src and 'scontent' in src and 'profile' not in src.lower():
+                            image_urls.append(src)
 
-            # Remove duplicates while preserving order
+                    if image_urls:
+                        print(f"Found {len(image_urls)} images via media container")
+                except:
+                    pass
+
+            # Method 3: Look for preload links with large image dimensions only
+            if not image_urls:
+                try:
+                    preload_links = driver.find_elements(By.CSS_SELECTOR, 'link[rel="preload"][as="image"]')
+                    for link in preload_links[:10]:  # Limit to first 10 preload links
+                        href = link.get_attribute('href')
+                        if href and 'scontent' in href:
+                            # Only accept large images (720 or 960 dimensions)
+                            if ('p720x720' in href or 's960x960' in href or 'p960x960' in href):
+                                if 'profile' not in href.lower() and 'emoji' not in href.lower():
+                                    image_urls.append(href)
+                    if image_urls:
+                        print(f"Found {len(image_urls)} images via preload links")
+                except:
+                    pass
+
+            # Method 4: Fallback - use broader search but limit results
+            if not image_urls:
+                try:
+                    all_imgs = driver.find_elements(By.TAG_NAME, 'img')
+                    for img in all_imgs[:20]:  # Limit search
+                        src = img.get_attribute('src')
+                        if src and 'scontent' in src:
+                            if 'profile' not in src.lower() and 'emoji' not in src.lower():
+                                # Check for reasonable size indicators in URL
+                                if any(size in src for size in ['s960', 'p960', 'p720', 's720', 'p526x296']):
+                                    image_urls.append(src)
+                    if image_urls:
+                        print(f"Found {len(image_urls)} images via img tag fallback")
+                except:
+                    pass
+
+            # Remove duplicates while preserving order, using URL base for comparison
             seen = set()
             unique_images = []
             for url in image_urls:
-                # Create a simplified version of URL for comparison (remove query params that might differ)
-                url_base = url.split('?')[0]
-                if url_base not in seen:
-                    seen.add(url_base)
+                # Normalize URL for comparison - extract the unique image ID
+                # Facebook image URLs have format: /v/xxx/IMAGE_ID_xxx.jpg
+                match = re.search(r'/(\d+_\d+)', url)
+                if match:
+                    image_id = match.group(1)
+                else:
+                    image_id = url.split('?')[0]
+
+                if image_id not in seen:
+                    seen.add(image_id)
                     unique_images.append(url)
 
             listing_data["image_urls"] = unique_images
             listing_data["image_count"] = len(unique_images)
-            print(f"Found {len(unique_images)} images")
+            print(f"Total unique images: {len(unique_images)}")
         except Exception as e:
             print(f"Error extracting images: {e}")
             listing_data["image_urls"] = []
@@ -242,7 +370,84 @@ def scrape_listing_details(driver, listing_url, listing_id, listing_uuid=None, h
         }
 
 
+def scrape_single_listing(args):
+    """Worker function for parallel scraping - creates its own driver"""
+    global completed_count
+    idx, listing, html_dir, total_count = args
+
+    listing_id = f"listing_{idx + 1:03d}"
+    listing_url = listing.get("link", "")
+
+    if not listing_url:
+        print(f"Skipping listing {listing_id} - no URL")
+        return None
+
+    driver = None
+    try:
+        # Create driver for this thread
+        driver = create_chrome_driver()
+
+        # Get or generate UUID
+        listing_uuid = listing.get("uuid", str(uuid.uuid4()))
+
+        # Scrape details
+        detailed_data = scrape_listing_details(driver, listing_url, listing_id, listing_uuid, html_dir)
+
+        # Merge with original listing data
+        detailed_data["original_thumbnail"] = listing.get("image_url")
+        detailed_data["original_preview_data"] = {
+            "price": listing.get("price"),
+            "title": listing.get("title"),
+            "location": listing.get("location")
+        }
+
+        # Fallback: Use original thumbnail if no images were extracted
+        if not detailed_data.get("image_urls") or len(detailed_data["image_urls"]) == 0:
+            original_thumb = listing.get("image_url")
+            if original_thumb:
+                detailed_data["image_urls"] = [original_thumb]
+                detailed_data["image_count"] = 1
+                print(f"Used original thumbnail as fallback for {listing_id}")
+
+        # Fallback: Use original price if not extracted
+        if detailed_data.get("price") == "N/A" and listing.get("price"):
+            detailed_data["price"] = listing.get("price")
+
+        # Update progress
+        with progress_lock:
+            completed_count += 1
+            print(f"Progress: {completed_count}/{total_count} listings completed")
+
+        return (idx, detailed_data)
+
+    except Exception as e:
+        print(f"Error in worker for {listing_id}: {e}")
+        return (idx, {
+            "listing_id": listing_id,
+            "url": listing_url,
+            "error": str(e),
+            "scraped_at": time.strftime("%Y-%m-%d %H:%M:%S")
+        })
+    finally:
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
+
+
 def main():
+    global completed_count
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Scrape Facebook Marketplace listing details')
+    parser.add_argument('--no-parallel', action='store_true', help='Disable parallel mode (run sequentially)')
+    parser.add_argument('--workers', type=int, default=4, help='Number of parallel workers (default: 4)')
+    args = parser.parse_args()
+
+    parallel_mode = not args.no_parallel
+    num_workers = args.workers
+
     # Setup paths
     script_dir = Path(__file__).parent
     input_file = script_dir / "scraped_data" / "marketplace_listings.json"
@@ -259,53 +464,93 @@ def main():
         listings = json.load(f)
 
     print(f"Found {len(listings)} listings to scrape")
-
-    # Setup Chrome driver
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-
-    driver = webdriver.Chrome(options=chrome_options)
+    print(f"Mode: {'Parallel' if parallel_mode else 'Sequential'}")
+    if parallel_mode:
+        print(f"Workers: {num_workers}")
 
     detailed_listings = []
+    completed_count = 0
 
     try:
-        for idx, listing in enumerate(listings):
-            listing_id = f"listing_{idx + 1:03d}"
-            listing_url = listing.get("link", "")
+        if parallel_mode:
+            # Parallel mode using ThreadPoolExecutor
+            work_items = [(idx, listing, html_dir, len(listings)) for idx, listing in enumerate(listings)]
 
-            if not listing_url:
-                print(f"Skipping listing {listing_id} - no URL")
-                continue
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
+                futures = {executor.submit(scrape_single_listing, item): item for item in work_items}
 
-            # Get or generate UUID
-            listing_uuid = listing.get("uuid", str(uuid.uuid4()))
+                results = {}
+                for future in as_completed(futures):
+                    try:
+                        result = future.result()
+                        if result:
+                            idx, data = result
+                            results[idx] = data
+                    except Exception as e:
+                        print(f"Future failed: {e}")
 
-            # Scrape details
-            detailed_data = scrape_listing_details(driver, listing_url, listing_id, listing_uuid, html_dir)
+                # Sort results by index to maintain order
+                for idx in sorted(results.keys()):
+                    detailed_listings.append(results[idx])
 
-            # Merge with original listing data
-            detailed_data["original_thumbnail"] = listing.get("image_url")
-            detailed_data["original_preview_data"] = {
-                "price": listing.get("price"),
-                "title": listing.get("title"),
-                "location": listing.get("location")
-            }
+                    # Save progress periodically
+                    if len(detailed_listings) % 5 == 0:
+                        progress_file = output_dir / "detailed_listings_progress.json"
+                        with open(progress_file, 'w', encoding='utf-8') as f:
+                            json.dump(detailed_listings, f, indent=2, ensure_ascii=False)
 
-            detailed_listings.append(detailed_data)
+        else:
+            # Sequential mode (original behavior)
+            driver = create_chrome_driver()
 
-            # Save progress after each listing
-            progress_file = output_dir / "detailed_listings_progress.json"
-            with open(progress_file, 'w', encoding='utf-8') as f:
-                json.dump(detailed_listings, f, indent=2, ensure_ascii=False)
+            try:
+                for idx, listing in enumerate(listings):
+                    listing_id = f"listing_{idx + 1:03d}"
+                    listing_url = listing.get("link", "")
 
-            # Rate limiting to avoid being blocked
-            time.sleep(3)
+                    if not listing_url:
+                        print(f"Skipping listing {listing_id} - no URL")
+                        continue
 
-            print(f"Progress: {idx + 1}/{len(listings)} listings completed")
+                    # Get or generate UUID
+                    listing_uuid = listing.get("uuid", str(uuid.uuid4()))
+
+                    # Scrape details
+                    detailed_data = scrape_listing_details(driver, listing_url, listing_id, listing_uuid, html_dir)
+
+                    # Merge with original listing data
+                    detailed_data["original_thumbnail"] = listing.get("image_url")
+                    detailed_data["original_preview_data"] = {
+                        "price": listing.get("price"),
+                        "title": listing.get("title"),
+                        "location": listing.get("location")
+                    }
+
+                    # Fallback: Use original thumbnail if no images were extracted
+                    if not detailed_data.get("image_urls") or len(detailed_data["image_urls"]) == 0:
+                        original_thumb = listing.get("image_url")
+                        if original_thumb:
+                            detailed_data["image_urls"] = [original_thumb]
+                            detailed_data["image_count"] = 1
+                            print(f"Used original thumbnail as fallback for {listing_id}")
+
+                    # Fallback: Use original price if not extracted
+                    if detailed_data.get("price") == "N/A" and listing.get("price"):
+                        detailed_data["price"] = listing.get("price")
+
+                    detailed_listings.append(detailed_data)
+
+                    # Save progress after each listing
+                    progress_file = output_dir / "detailed_listings_progress.json"
+                    with open(progress_file, 'w', encoding='utf-8') as f:
+                        json.dump(detailed_listings, f, indent=2, ensure_ascii=False)
+
+                    # Rate limiting to avoid being blocked
+                    time.sleep(2)
+
+                    print(f"Progress: {idx + 1}/{len(listings)} listings completed")
+            finally:
+                driver.quit()
 
         # Save final results
         output_file = output_dir / "detailed_listings.json"
@@ -320,15 +565,16 @@ def main():
         print(f"Raw HTML files saved to: {html_dir}")
 
         # Print summary statistics
-        total_images = sum(listing.get("image_count", 0) for listing in detailed_listings)
-        with_description = sum(1 for listing in detailed_listings if listing.get("description") != "N/A")
-        with_condition = sum(1 for listing in detailed_listings if listing.get("condition") != "N/A")
+        if detailed_listings:
+            total_images = sum(listing.get("image_count", 0) for listing in detailed_listings)
+            with_description = sum(1 for listing in detailed_listings if listing.get("description") != "N/A")
+            with_condition = sum(1 for listing in detailed_listings if listing.get("condition") != "N/A")
 
-        print(f"\nSummary Statistics:")
-        print(f"  Total image URLs collected: {total_images}")
-        print(f"  Average images per listing: {total_images / len(detailed_listings):.1f}")
-        print(f"  Listings with descriptions: {with_description}/{len(detailed_listings)}")
-        print(f"  Listings with condition info: {with_condition}/{len(detailed_listings)}")
+            print(f"\nSummary Statistics:")
+            print(f"  Total image URLs collected: {total_images}")
+            print(f"  Average images per listing: {total_images / len(detailed_listings):.1f}")
+            print(f"  Listings with descriptions: {with_description}/{len(detailed_listings)}")
+            print(f"  Listings with condition info: {with_condition}/{len(detailed_listings)}")
 
     except KeyboardInterrupt:
         print("\n\nScraping interrupted by user. Saving progress...")
@@ -336,9 +582,6 @@ def main():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(detailed_listings, f, indent=2, ensure_ascii=False)
         print(f"Partial data saved to: {output_file}")
-
-    finally:
-        driver.quit()
 
 
 if __name__ == "__main__":
