@@ -7,49 +7,50 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ============================================
 // LISTING - A Facebook Marketplace listing
 // ============================================
 model Listing {
-  id          String    @id @default(uuid())
+  id String @id @default(uuid())
 
   // Basic info
   title       String
-  price       String                          // "$150" - keeping as string for flexibility
-  description String?                         // Optional - some listings have none
-  condition   String?                         // "Used - Good", "New", etc.
-  location    String?                         // "Auburn, AL"
+  price       String // "$150" - keeping as string for flexibility
+  description String? // Optional - some listings have none
+  condition   String? // "Used - Good", "New", etc.
+  location    String? // "Auburn, AL"
 
   // Images
-  imageUrls   String[]                        // Array of image URLs
+  imageUrls String[] // Array of image URLs
 
   // Source info
-  sourceUrl   String    @unique               // Facebook listing URL (unique to avoid duplicates)
+  sourceUrl String @unique // Facebook listing URL (unique to avoid duplicates)
 
   // Dates
-  listedAt    DateTime?                       // When seller listed it (calculated)
-  scrapedAt   DateTime  @default(now())       // When we scraped it
+  listedAt  DateTime? // When seller listed it (calculated)
+  scrapedAt DateTime  @default(now()) // When we scraped it
 
   // Relation to price estimate
-  priceEstimate PriceEstimate?                // One listing has one (optional) price estimate
+  priceEstimate PriceEstimate? // One listing has one (optional) price estimate
 }
 
 // ============================================
 // PRICE ESTIMATE - AI-generated fair market value
 // ============================================
 model PriceEstimate {
-  id             String   @id @default(uuid())
+  id String @id @default(uuid())
 
   // The estimate
-  estimatedPrice String?                      // "$40 - $80"
-  aiResponse     String?                      // Full AI response text
+  estimatedPrice String? // "$40 - $80"
+  aiResponse     String? // Full AI response text
 
   // Timestamps
-  createdAt      DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Relation to listing
-  listingId      String   @unique             // Foreign key
-  listing        Listing  @relation(fields: [listingId], references: [id])
+  listingId String  @unique // Foreign key
+  listing   Listing @relation(fields: [listingId], references: [id])
 }

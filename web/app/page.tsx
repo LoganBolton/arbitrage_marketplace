@@ -1,6 +1,5 @@
-import { promises as fs } from "fs";
-import path from "path";
 import ListingCard from "@/components/ListingCard";
+import prisma from "@/lib/prisma";
 
 interface Listing {
   uuid: string;
@@ -21,80 +20,48 @@ interface Listing {
   };
 }
 
-interface PriceEstimate {
-  uuid: string;
-  estimated_price?: string;
-}
+type ListingWithAi = Listing & { aiPrice?: string };
 
-async function getLatestRun(): Promise<string | null> {
-  const scrapedDataDir = path.join(
-    process.cwd(),
-    "..",
-    "selenium",
-    "scraped_data"
-  );
+async function getListingsFromDb(): Promise<ListingWithAi[]> {
+  const rows = await prisma.listing.findMany({
+    include: { priceEstimate: true },
+    orderBy: { scrapedAt: "desc" },
+  });
 
-  try {
-    const entries = await fs.readdir(scrapedDataDir, { withFileTypes: true });
-    const runs = entries
-      .filter((e) => e.isDirectory() && /^\d{4}-\d{2}-\d{2}/.test(e.name))
-      .map((e) => e.name)
-      .sort();
+  return rows.map((l) => {
+    const location = l.location ?? "";
+    const description = l.description ?? "N/A";
+    const condition = l.condition ?? "";
+    const imageUrls = l.imageUrls ?? [];
 
-    return runs.length > 0 ? runs[runs.length - 1] : null;
-  } catch {
-    return null;
-  }
-}
+    const listing: Listing = {
+      uuid: l.id,
+      listing_id: l.id,
+      url: l.sourceUrl,
+      title: l.title,
+      price: l.price,
+      location,
+      description,
+      condition,
+      image_urls: imageUrls,
+      image_count: imageUrls.length,
+      original_thumbnail: "",
+      original_preview_data: {
+        price: l.price,
+        title: l.title,
+        location,
+      },
+    };
 
-async function getListings(): Promise<Listing[]> {
-  const latestRun = await getLatestRun();
-  if (!latestRun) {
-    console.error("No run folders found");
-    return [];
-  }
-
-  const filePath = path.join(
-    process.cwd(),
-    "..",
-    "selenium",
-    "scraped_data",
-    latestRun,
-    "detailed_listings.json"
-  );
-
-  try {
-    const data = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Error loading listings:", error);
-    return [];
-  }
-}
-
-async function getPriceEstimates(): Promise<Record<string, PriceEstimate>> {
-  const responsesDir = path.join(process.cwd(), "..", "ai", "responses");
-
-  try {
-    const files = await fs.readdir(responsesDir);
-    const priceFiles = files
-      .filter((f) => f.startsWith("price_estimates_") && f.endsWith(".json"))
-      .sort();
-
-    if (priceFiles.length === 0) return {};
-
-    const latestFile = priceFiles[priceFiles.length - 1];
-    const filePath = path.join(responsesDir, latestFile);
-    const data = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    return {};
-  }
+    return {
+      ...listing,
+      aiPrice: l.priceEstimate?.estimatedPrice ?? undefined,
+    };
+  });
 }
 
 export default async function Home() {
-  const listings = await getListings();
-  const priceEstimates = await getPriceEstimates();
+  const listings = await getListingsFromDb();
 
   return (
     <main className="main">
@@ -108,7 +75,7 @@ export default async function Home() {
           <ListingCard
             key={listing.listing_id}
             listing={listing}
-            aiPrice={priceEstimates[listing.uuid]?.estimated_price}
+            aiPrice={(listing as ListingWithAi).aiPrice}
           />
         ))}
       </div>
@@ -117,7 +84,7 @@ export default async function Home() {
         <div className="empty-state">
           <p>No listings found</p>
           <p className="hint">
-            Run the scraper to populate listings data
+            Add data to the database to populate listings
           </p>
         </div>
       )}

@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export:csv": "node scripts/export_to_csv.mjs",
+    "import:json": "node scripts/import_from_json.mjs"
   },
   "dependencies": {
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^6.2.1",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -18,7 +20,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "prisma": "^7.2.0",
+    "prisma": "^6.2.1",
     "typescript": "^5.7.2"
   }
 }
