@@ -11,7 +11,29 @@ datasource db {
 }
 
 // ============================================
-// LISTING - A Facebook Marketplace listing
+// LISTING PREVIEW - Initial scraped data from marketplace
+// ============================================
+model ListingPreview {
+  id String @id @default(uuid())
+
+  // Preview data (from marketplace_listings.json)
+  link     String  @unique // Facebook listing URL
+  title    String
+  price    String  // "$150"
+  location String? // "Auburn, AL"
+  imageUrl String? // Preview thumbnail
+
+  // Lifecycle tracking
+  firstSeenAt      DateTime  @default(now()) // When we first discovered this listing
+  lastSeenAt       DateTime  @updatedAt      // Last time we saw it in a scrape
+  detailsScrapedAt DateTime?                 // NULL = not scraped yet, set = scraped (with timestamp)
+
+  // Relation to full listing details
+  listing Listing? // Optional - only exists after detail scrape
+}
+
+// ============================================
+// LISTING - A Facebook Marketplace listing (full details)
 // ============================================
 model Listing {
   id String @id @default(uuid())
@@ -32,6 +54,10 @@ model Listing {
   // Dates
   listedAt  DateTime? // When seller listed it (calculated)
   scrapedAt DateTime  @default(now()) // When we scraped it
+
+  // Link to preview (optional - for tracking)
+  previewId String?         @unique
+  preview   ListingPreview? @relation(fields: [previewId], references: [id])
 
   // Relation to price estimate
   priceEstimate PriceEstimate? // One listing has one (optional) price estimate
