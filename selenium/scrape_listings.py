@@ -29,22 +29,25 @@ def scrape_marketplace_listings(driver, max_scrolls=3):
                 continue
             seen_urls.add(link)
 
-            price_elem = element.find_elements(By.XPATH, './/span[contains(@class, "x193iq5w") and contains(@class, "x1lliihq")]')
-            price = price_elem[0].text if price_elem else "N/A"
+            spans = element.find_elements(By.XPATH, './/span[contains(@class, "x193iq5w") and contains(@class, "x1lliihq")]')
 
-            title_elems = element.find_elements(By.XPATH, './/span[contains(@class, "x193iq5w") and contains(@class, "x1lliihq")]')
+            price = "N/A"
             title = "N/A"
             location = "N/A"
 
-            for elem in title_elems:
-                text = elem.text
-                if text and text != price:
-                    # Check if this looks like a location (ends with state abbreviation)
-                    if text.endswith(("AL", "GA", "FL", "TX", "NY", "CA", "NC", "SC", "TN", "VA", "MS", "LA", "AR", "OK", "KS", "MO", "IA", "NE", "SD", "ND", "MT", "WY", "CO", "NM", "AZ", "UT", "NV", "ID", "WA", "OR", "AK", "HI", "ME", "NH", "VT", "MA", "RI", "CT", "NJ", "DE", "MD", "WV", "KY", "OH", "IN", "IL", "WI", "MI", "MN", "PA")):
-                        location = text
-                    # Otherwise it's the title
-                    elif title == "N/A":
-                        title = text
+            for elem in spans:
+                text = elem.text.strip()
+                if not text:
+                    continue
+                # Price: starts with $ or is "Free"
+                if price == "N/A" and (text.startswith("$") or text.lower() == "free"):
+                    price = text
+                # Location: ends with a US state abbreviation
+                elif location == "N/A" and len(text) > 2 and text.endswith(("AL", "GA", "FL", "TX", "NY", "CA", "NC", "SC", "TN", "VA", "MS", "LA", "AR", "OK", "KS", "MO", "IA", "NE", "SD", "ND", "MT", "WY", "CO", "NM", "AZ", "UT", "NV", "ID", "WA", "OR", "AK", "HI", "ME", "NH", "VT", "MA", "RI", "CT", "NJ", "DE", "MD", "WV", "KY", "OH", "IN", "IL", "WI", "MI", "MN", "PA")):
+                    location = text
+                # Title: first remaining text that isn't a known label
+                elif title == "N/A" and text not in ("Just listed", "Listed today", "Listed yesterday"):
+                    title = text
 
             image_elems = element.find_elements(By.TAG_NAME, 'img')
             image_url = image_elems[0].get_attribute('src') if image_elems else "N/A"
