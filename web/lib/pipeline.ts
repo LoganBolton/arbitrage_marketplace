@@ -2,13 +2,21 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 
 const repoRoot = path.join(process.cwd(), '..');
-const venvPython = path.join(repoRoot, '.venv', 'bin', 'python');
+
+export const paths = {
+  repoRoot,
+  venvPython: path.join(repoRoot, '.venv', 'bin', 'python'),
+  scrapeListings: path.join(repoRoot, 'selenium', 'scrape_listings.py'),
+  scrapeDetails: path.join(repoRoot, 'selenium', 'scrape_listing_details.py'),
+  aiSearch: path.join(repoRoot, 'ai', 'search.py'),
+  aiExtractPrice: path.join(repoRoot, 'ai', 'extract_price.py'),
+} as const;
 
 export const scripts = {
-  scrapeListings: venvPython + ' ' + path.join(repoRoot, 'selenium', 'scrape_listings.py'),
-  scrapeDetails: venvPython + ' ' + path.join(repoRoot, 'selenium', 'scrape_listing_details.py'),
-  aiSearch: venvPython + ' ' + path.join(repoRoot, 'ai', 'search.py'),
-  aiExtractPrice: venvPython + ' ' + path.join(repoRoot, 'ai', 'extract_price.py'),
+  scrapeListings: paths.venvPython + ' ' + paths.scrapeListings,
+  scrapeDetails: paths.venvPython + ' ' + paths.scrapeDetails,
+  aiSearch: paths.venvPython + ' ' + paths.aiSearch,
+  aiExtractPrice: paths.venvPython + ' ' + paths.aiExtractPrice,
   importToDb: 'node scripts/import_from_json.mjs',
 } as const;
 
