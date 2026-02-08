@@ -98,6 +98,19 @@ export default function AdminPage() {
           >
             View Listings →
           </a>
+          <a
+            href="/admin/price-eval"
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#fd7e14',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+            }}
+          >
+            Price Eval →
+          </a>
         </div>
       </div>
 
