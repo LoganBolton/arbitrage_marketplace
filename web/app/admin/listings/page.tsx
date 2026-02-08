@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 interface PriceEstimate {
@@ -26,6 +26,19 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+  const lastClickedIndex = useRef<number | null>(null);
+  const shiftHeld = useRef(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => { if (e.key === 'Shift') shiftHeld.current = true; };
+    const up = (e: KeyboardEvent) => { if (e.key === 'Shift') shiftHeld.current = false; };
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
 
   async function fetchListings() {
     const res = await fetch('/api/listings');
@@ -38,11 +51,24 @@ export default function ListingsPage() {
     fetchListings();
   }, []);
 
-  function toggleOne(id: string) {
+  function toggleOne(index: number, shiftKey: boolean) {
+    const id = listings[index].id;
+    const anchor = lastClickedIndex.current;
+    lastClickedIndex.current = index;
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (shiftKey && anchor !== null) {
+        const lo = Math.min(anchor, index);
+        const hi = Math.max(anchor, index);
+        const adding = !prev.has(id);
+        for (let i = lo; i <= hi; i++) {
+          if (adding) next.add(listings[i].id);
+          else next.delete(listings[i].id);
+        }
+      } else {
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+      }
       return next;
     });
   }
@@ -143,7 +169,7 @@ export default function ListingsPage() {
                 </tr>
               </thead>
               <tbody>
-                {listings.map((listing) => (
+                {listings.map((listing, index) => (
                   <tr
                     key={listing.id}
                     style={{
@@ -155,7 +181,7 @@ export default function ListingsPage() {
                       <input
                         type="checkbox"
                         checked={selected.has(listing.id)}
-                        onChange={() => toggleOne(listing.id)}
+                        onChange={() => toggleOne(index, shiftHeld.current)}
                         style={{ cursor: 'pointer' }}
                       />
                     </td>
