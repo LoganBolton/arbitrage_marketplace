@@ -1,4 +1,5 @@
 import ListingCard from "@/components/ListingCard";
+import ScrapeButton from "@/components/ScrapeButton";
 import prisma from "@/lib/prisma";
 import { Listing } from "@/lib/types";
 
@@ -31,8 +32,13 @@ export default async function Home() {
   return (
     <main className="main">
       <header className="header">
-        <h1>Marketplace</h1>
-        <p className="subtitle">{listings.length} listings available</p>
+        <div className="header-row">
+          <div>
+            <h1>Marketplace</h1>
+            <p className="subtitle">{listings.length} listings available</p>
+          </div>
+          <ScrapeButton />
+        </div>
       </header>
 
       <div className="listings-grid">

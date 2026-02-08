@@ -173,6 +173,70 @@ body {
   margin-top: 4px;
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.scrape-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.scrape-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: #0866ff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.scrape-button:hover {
+  background: #0756d6;
+}
+
+.scrape-button:disabled {
+  background: #e4e6eb;
+  color: #bcc0c4;
+  cursor: not-allowed;
+}
+
+.scrape-log {
+  margin-top: 12px;
+  padding: 12px;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 360px;
+  overflow: auto;
+  background: #1c1e21;
+  color: #dadde1;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.scrape-cursor {
+  opacity: 0.5;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
 .empty-state {
   text-align: center;
   padding: 64px 16px;
