@@ -1,67 +1,32 @@
 import ListingCard from "@/components/ListingCard";
 import prisma from "@/lib/prisma";
+import { Listing } from "@/lib/types";
 
-interface Listing {
-  uuid: string;
-  listing_id: string;
-  url: string;
-  title: string;
-  price: string;
-  location: string;
-  description: string;
-  condition: string;
-  image_urls: string[];
-  image_count: number;
-  original_thumbnail: string;
-  original_preview_data: {
-    price: string;
-    title: string;
-    location: string;
-  };
-}
-
-type ListingWithAi = Listing & { aiPrice?: string };
-
-async function getListingsFromDb(): Promise<ListingWithAi[]> {
+async function getListings(): Promise<Listing[]> {
   const rows = await prisma.listing.findMany({
     include: { priceEstimate: true },
     orderBy: { scrapedAt: "desc" },
   });
 
-  return rows.map((l) => {
-    const location = l.location ?? "";
-    const description = l.description ?? "N/A";
-    const condition = l.condition ?? "";
-    const imageUrls = l.imageUrls ?? [];
-
-    const listing: Listing = {
-      uuid: l.id,
-      listing_id: l.id,
-      url: l.sourceUrl,
-      title: l.title,
-      price: l.price,
-      location,
-      description,
-      condition,
-      image_urls: imageUrls,
-      image_count: imageUrls.length,
-      original_thumbnail: "",
-      original_preview_data: {
-        price: l.price,
-        title: l.title,
-        location,
-      },
-    };
-
-    return {
-      ...listing,
-      aiPrice: l.priceEstimate?.estimatedPrice ?? undefined,
-    };
-  });
+  return rows.map((l) => ({
+    id: l.id,
+    title: l.title,
+    price: l.price,
+    description: l.description,
+    condition: l.condition,
+    location: l.location,
+    imageUrls: l.imageUrls ?? [],
+    sourceUrl: l.sourceUrl,
+    listedAt: l.listedAt?.toISOString() ?? null,
+    scrapedAt: l.scrapedAt.toISOString(),
+    priceEstimate: l.priceEstimate
+      ? { estimatedPrice: l.priceEstimate.estimatedPrice }
+      : null,
+  }));
 }
 
 export default async function Home() {
-  const listings = await getListingsFromDb();
+  const listings = await getListings();
 
   return (
     <main className="main">
@@ -72,11 +37,7 @@ export default async function Home() {
 
       <div className="listings-grid">
         {listings.map((listing) => (
-          <ListingCard
-            key={listing.listing_id}
-            listing={listing}
-            aiPrice={(listing as ListingWithAi).aiPrice}
-          />
+          <ListingCard key={listing.id} listing={listing} />
         ))}
       </div>
 
