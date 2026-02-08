@@ -71,19 +71,34 @@ export default function AdminPage() {
     <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Arbitrage Marketplace Admin</h1>
-        <a
-          href="/admin/previews"
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: '#28a745',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-          }}
-        >
-          View All Previews →
-        </a>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <a
+            href="/admin/previews"
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#28a745',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+            }}
+          >
+            View All Previews →
+          </a>
+          <a
+            href="/admin/listings"
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#6f42c1',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+            }}
+          >
+            View Listings →
+          </a>
+        </div>
       </div>
 
       <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid #0070f3', borderRadius: '8px', backgroundColor: '#f0f7ff' }}>
