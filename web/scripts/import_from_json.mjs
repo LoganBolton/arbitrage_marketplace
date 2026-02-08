@@ -73,12 +73,14 @@ async function main() {
     });
     if (res.id === id) created++; else updated++;
 
+    // Use the actual DB id (may differ from uuid when listing already existed)
+    const dbId = res.id;
     const pe = prices[id];
     if (pe) {
       await prisma.priceEstimate.upsert({
-        where: { listingId: id },
+        where: { listingId: dbId },
         create: {
-          listingId: id,
+          listingId: dbId,
           estimatedPrice: pe.estimated_price ?? null,
           aiResponse: pe.ai_response ?? null,
         },
